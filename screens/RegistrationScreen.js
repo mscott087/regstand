@@ -1,11 +1,8 @@
 import React from 'react';
-import { Text } from 'react-native';
 import { WebView } from 'react-native-webview';
-import { AppLoading } from 'expo';
 
-// regstand-scan-trigger [regstand-trigger-scan]
+// regstand-scan-trigger [regstand-scan-trigger]
 // regstand-scan-action window[func];
-// scan field
 
 class RegistrationScreen extends React.Component {
 	webview = null;
@@ -18,33 +15,33 @@ class RegistrationScreen extends React.Component {
 		const { navigation } = this.props;
 
 		const injectedJavascript = `
-        (function() {
-            window.postMessage = function(data) {
-                window.ReactNativeWebView.postMessage(data);
-            };
+            (function() {
+                window.postMessage = function(data) {
+                    window.ReactNativeWebView.postMessage(data);
+                };
 
-            document.querySelector("#FormOption3 img").onclick = function(e){
-                e.preventDefault();
-                window.postMessage("scan");
-            };
+                document.querySelector("#FormOption3 img").onclick = function(e){
+                    e.preventDefault();
+                    window.postMessage("scan");
+                };
 
-            window.addEventListener("message", function(event) {
+                window.addEventListener("message", function(event) {
 
-                var response = JSON.parse(event.data);
+                    var response = JSON.parse(event.data);
 
-                switch (response.type) {
-                    case "scan":
+                    switch (response.type) {
+                        case "scan":
 
-                        var field = document.querySelector("#BadgeOrder");
-                        var form = document.querySelector("#FormOption3");
-                        field.value = response.data;
+                            var field = document.querySelector("#BadgeOrder");
+                            var form = document.querySelector("#FormOption3");
+                            field.value = response.data;
 
-                        form.submit();
-                    break;
-                }
-            });
-        })()
-    `;
+                            form.submit();
+                        break;
+                    }
+                });
+            })()
+        `;
 
 		const onMessage = event => {
 			switch (event.nativeEvent.data) {
@@ -62,7 +59,6 @@ class RegistrationScreen extends React.Component {
 				}}
 				originWhitelist={['*']}
 				javaScriptEnabled={true}
-				mixedContentMode={'compatibility'}
 				injectedJavaScript={injectedJavascript}
 				onMessage={onMessage}
 				scalesPageToFit
