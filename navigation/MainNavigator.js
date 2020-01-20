@@ -1,13 +1,16 @@
 import React from 'react';
+import { Text } from 'react-native';
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
-import RegistrationScreen from '../screens/RegistrationScreen';
+import WebViewScreen from '../screens/WebViewScreen';
 import ScanScreen from '../screens/ScanScreen';
+import SettingScreen from '../screens/SettingScreen';
+import { responsiveFontSize } from './../constants/Layout';
 
 const MainTabNavigator = createStackNavigator(
 	{
-		Registration: {
-			screen: RegistrationScreen,
+		WebView: {
+			screen: WebViewScreen,
 			navigationOptions: ({ navigation }) => ({
 				header: null,
 			}),
@@ -19,12 +22,24 @@ const MainTabNavigator = createStackNavigator(
 				header: null,
 			}),
 		},
+
+		Settings: {
+			screen: SettingScreen,
+			navigationOptions: ({ navigation }) => ({
+				headerTitle: () => (
+					<Text style={{ fontSize: responsiveFontSize({ min: 18, max: 32 }) }}>
+						Settings
+					</Text>
+				),
+			}),
+		},
 	},
 	{
-		initialRouteName: 'Registration',
+		initialRouteName: 'WebView',
 		defaultNavigationOptions: {
 			headerStyle: {
-				height: 65,
+				height: 55,
+				backgroundColor: '#eee',
 			},
 		},
 	}

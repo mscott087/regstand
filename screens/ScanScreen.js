@@ -2,10 +2,11 @@ import React from 'react';
 import {
 	View,
 	StyleSheet,
-	Button,
+	Text,
 	TouchableOpacity,
 	TouchableWithoutFeedback,
 } from 'react-native';
+import { responsiveFontSize, spacing } from './../constants/Layout';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 
 class ScanScreen extends React.Component {
@@ -33,7 +34,7 @@ class ScanScreen extends React.Component {
 			type: 'scan',
 		});
 
-		this.props.screenProps.webview.postMessage(response);
+		this.props.screenProps.webView.postMessage(response);
 	};
 
 	render() {
@@ -63,16 +64,20 @@ class ScanScreen extends React.Component {
 									backgroundColor: 'rgba(255,255,255,.1)',
 									borderWidth: 1,
 									borderColor: 'rgba(255,255,255,.6)',
-									padding: 20,
-									margin: 25,
-									marginBottom: 50,
+									paddingHorizontal: spacing.horizontal.small,
+									paddingVertical: spacing.vertical.small,
+									margin: spacing.horizontal.medium,
+									marginBottom: spacing.vertical.large,
 									borderRadius: 10,
 								}}>
-								<Button
-									title='CANCEL'
-									color='rgba(255,255,255,.6)'
-									onPress={this.closeScanner}
-								/>
+								<Text
+									style={{
+										color: '#fff',
+										textAlign: 'center',
+										fontSize: responsiveFontSize({ min: 16, max: 32 }),
+									}}>
+									CANCEL
+								</Text>
 							</TouchableOpacity>
 						</BarCodeScanner>
 					</TouchableWithoutFeedback>

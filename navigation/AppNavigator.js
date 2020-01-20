@@ -1,14 +1,20 @@
 import React from 'react';
 import MainNavigator from './MainNavigator';
 import * as Permissions from 'expo-permissions';
+import { StatusBar } from 'react-native';
 
 class AppNavigator extends React.Component {
 	static router = MainNavigator.router;
 
 	state = {
+		webView: null,
+		webViewUrl: 'https://xpressreg.net/register/expo1219/landing.asp',
 		cameraPermission: false,
-		webview: null,
 	};
+
+	componentDidMount() {
+		StatusBar.setHidden(true);
+	}
 
 	async getCameraPermission() {
 		const { status } = await Permissions.askAsync(Permissions.CAMERA);
@@ -20,7 +26,11 @@ class AppNavigator extends React.Component {
 	}
 
 	setWebViewRef(ref) {
-		this.setState({ webview: ref });
+		this.setState({ webView: ref });
+	}
+
+	setWebViewUrl(url) {
+		this.setState({ webViewUrl: url });
 	}
 
 	render() {
@@ -34,6 +44,7 @@ class AppNavigator extends React.Component {
 					getCameraPermission: this.getCameraPermission.bind(this),
 					setCameraPermission: this.setCameraPermission.bind(this),
 					setWebViewRef: this.setWebViewRef.bind(this),
+					setWebViewUrl: this.setWebViewUrl.bind(this),
 				}}
 			/>
 		);
