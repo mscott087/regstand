@@ -33,7 +33,9 @@
     "react-native-webview": "7.4.3",
     "react-navigation": "~4.0.10",
     "react-navigation-stack": "~1.10.3",
-    "react-navigation-tabs": "~2.6.2"
+    "react-navigation-tabs": "~2.6.2",
+    "expo-network": "~2.0.0",
+    "@react-native-community/netinfo": "4.6.0"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",

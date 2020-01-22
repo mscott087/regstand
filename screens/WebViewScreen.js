@@ -1,13 +1,12 @@
 import React from 'react';
-import { View, Animated, Alert, Text } from 'react-native';
-import { responsiveFontSize } from './../constants/Layout';
+import { View, Text, StyleSheet } from 'react-native';
 import { WebView } from 'react-native-webview';
 import {
-	PanGestureHandler,
 	FlingGestureHandler,
 	Directions,
 	State,
 } from 'react-native-gesture-handler';
+import { responsiveFontSize, spacing } from './../constants/Layout';
 
 class WebViewScreen extends React.Component {
 	state = {
@@ -45,8 +44,8 @@ class WebViewScreen extends React.Component {
 	};
 
 	render() {
+		const { key } = this.state;
 		const { navigation, screenProps } = this.props;
-		const { webViewUrl } = screenProps;
 
 		return (
 			<FlingGestureHandler
@@ -57,30 +56,24 @@ class WebViewScreen extends React.Component {
 						navigation.navigate('Settings');
 					}
 				}}>
-				<View style={{ flex: 1, marginTop: 20 }}>
+				<View style={webViewStyles.container}>
 					<WebView
-						key={this.state.key}
-						onNavigationStateChange={this.setWebViewUrlChanged}
-						bounces={false}
-						ref={ref => (this.webView = ref)}
 						source={{
-							uri: webViewUrl,
+							uri: screenProps.webViewUrl,
 						}}
-						originWhitelist={['*']}
-						javaScriptEnabled={true}
-						injectedJavaScript={injectedJavascript}
+						key={key}
+						ref={ref => (this.webView = ref)}
 						onMessage={this.onMessage}
-						scalesPageToFit
+						onNavigationStateChange={this.setWebViewUrlChanged}
 						allowsBackForwardNavigationGestures={true}
+						injectedJavaScript={injectedJavascript}
+						cacheEnabled
+						domStorageEnabled
+						scalesPageToFit
 					/>
 					<Text
 						onPress={this.resetWebViewToInitialUrl}
-						style={{
-							fontSize: responsiveFontSize({ min: 16, max: 32 }),
-							padding: 30,
-							textAlign: 'center',
-							backgroundColor: '#eee',
-						}}>
+						style={webViewStyles.home}>
 						Home
 					</Text>
 				</View>
@@ -118,5 +111,18 @@ const injectedJavascript = `
         });
     })()
 `;
+
+const webViewStyles = StyleSheet.create({
+	container: {
+		flex: 1,
+		marginTop: 20,
+	},
+	home: {
+		fontSize: responsiveFontSize({ min: 16, max: 26 }),
+		padding: spacing.vertical.small,
+		textAlign: 'center',
+		backgroundColor: '#eee',
+	},
+});
 
 export default WebViewScreen;

@@ -1,19 +1,36 @@
 import React from 'react';
 import MainNavigator from './MainNavigator';
 import * as Permissions from 'expo-permissions';
+import * as Network from 'expo-network';
 import { StatusBar } from 'react-native';
 
 class AppNavigator extends React.Component {
 	static router = MainNavigator.router;
 
 	state = {
-		webView: null,
-		webViewUrl: 'https://xpressreg.net/register/expo1219/landing.asp',
+		network: {
+			type: undefined,
+			address: undefined,
+			isConnected: undefined,
+			isInternetReachable: undefined,
+		},
+		webView: undefined,
+		webViewUrl: 'https://onsite.xpressreg.local/admin_xp/onsite.asp',
 		cameraPermission: false,
 	};
 
 	componentDidMount() {
 		StatusBar.setHidden(true);
+		this.getNetwork();
+	}
+
+	async getNetwork() {
+		const address = await Network.getIpAddressAsync();
+		const network = await Network.getNetworkStateAsync();
+
+		this.setState({
+			network: { address: address, ...network },
+		});
 	}
 
 	async getCameraPermission() {
@@ -35,12 +52,12 @@ class AppNavigator extends React.Component {
 
 	render() {
 		const { navigation } = this.props;
-
 		return (
 			<MainNavigator
 				navigation={navigation}
 				screenProps={{
 					...this.state,
+					getNetwork: this.getNetwork.bind(this),
 					getCameraPermission: this.getCameraPermission.bind(this),
 					setCameraPermission: this.setCameraPermission.bind(this),
 					setWebViewRef: this.setWebViewRef.bind(this),

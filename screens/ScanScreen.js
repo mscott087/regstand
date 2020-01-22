@@ -17,7 +17,6 @@ class ScanScreen extends React.Component {
 	toggleCamera = () => {
 		this.setState(state => {
 			state.showFrontCamera = !state.showFrontCamera;
-
 			return state;
 		});
 	};
@@ -39,11 +38,11 @@ class ScanScreen extends React.Component {
 
 	render() {
 		const { showFrontCamera } = this.state;
-		const { cameraPermission, getCameraPermission } = this.props.screenProps;
+		const { screenProps } = this.props;
 
-		if (cameraPermission) {
+		if (screenProps.cameraPermission) {
 			return (
-				<View style={scanStyles.container}>
+				<View style={[scanStyles.container, scanStyles.background]}>
 					<TouchableWithoutFeedback onLongPress={this.toggleCamera}>
 						<BarCodeScanner
 							type={
@@ -53,39 +52,19 @@ class ScanScreen extends React.Component {
 							}
 							style={scanStyles.container}
 							onBarCodeScanned={this.onScan}>
-							<View
-								style={{
-									flex: 1,
-								}}
-							/>
+							<View style={scanStyles.container} />
 							<TouchableOpacity
 								onPress={this.closeScanner}
-								style={{
-									backgroundColor: 'rgba(255,255,255,.1)',
-									borderWidth: 1,
-									borderColor: 'rgba(255,255,255,.6)',
-									paddingHorizontal: spacing.horizontal.small,
-									paddingVertical: spacing.vertical.small,
-									margin: spacing.horizontal.medium,
-									marginBottom: spacing.vertical.large,
-									borderRadius: 10,
-								}}>
-								<Text
-									style={{
-										color: '#fff',
-										textAlign: 'center',
-										fontSize: responsiveFontSize({ min: 16, max: 32 }),
-									}}>
-									CANCEL
-								</Text>
+								style={scanStyles.cancelContainer}>
+								<Text style={scanStyles.cancelText}>CANCEL</Text>
 							</TouchableOpacity>
 						</BarCodeScanner>
 					</TouchableWithoutFeedback>
 				</View>
 			);
 		} else {
-			getCameraPermission();
-			return false;
+			screenProps.getCameraPermission();
+			return true;
 		}
 	}
 }
@@ -93,10 +72,24 @@ class ScanScreen extends React.Component {
 export const scanStyles = StyleSheet.create({
 	container: {
 		flex: 1,
+	},
+	background: {
 		backgroundColor: '#000',
 	},
-	cancel: {
-		bottom: 0,
+	cancelContainer: {
+		backgroundColor: 'rgba(255,255,255,.1)',
+		borderWidth: 1,
+		borderColor: 'rgba(255,255,255,.6)',
+		paddingHorizontal: spacing.horizontal.small,
+		paddingVertical: spacing.vertical.small,
+		margin: spacing.horizontal.medium,
+		marginBottom: spacing.vertical.large,
+		borderRadius: 10,
+	},
+	cancelText: {
+		color: '#fff',
+		textAlign: 'center',
+		fontSize: responsiveFontSize({ min: 16, max: 26 }),
 	},
 });
 

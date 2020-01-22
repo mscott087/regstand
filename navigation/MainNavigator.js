@@ -36,12 +36,6 @@ const MainTabNavigator = createStackNavigator(
 	},
 	{
 		initialRouteName: 'WebView',
-		defaultNavigationOptions: {
-			headerStyle: {
-				height: 55,
-				backgroundColor: '#eee',
-			},
-		},
 	}
 );
 

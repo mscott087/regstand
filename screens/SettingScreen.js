@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Content, Item, Input, Label } from 'native-base';
+import { Item, Input, Label, Form } from 'native-base';
 
 class SettingScreen extends React.Component {
 	state = {
@@ -10,45 +10,51 @@ class SettingScreen extends React.Component {
 		this.setState({ urlValue: this.props.screenProps.webViewUrl });
 	}
 
-	onBlur = () => {
-		const { screenProps, navigation } = this.props;
+	onBlurUrl = () => {
 		const { urlValue } = this.state;
+		const { screenProps, navigation } = this.props;
 
 		if (urlValue !== '') {
 			screenProps.setWebViewUrl(urlValue);
 			navigation.pop();
 		} else {
-			this.setState({ urlValue: screenProps.webViewUrl });
+			this.setUrlValue(screenProps.webViewUrl);
 		}
 	};
 
-	onChange = event => {
-		this.setState({ urlValue: event.nativeEvent.text });
+	onChangeUrl = event => {
+		this.setUrlValue(event.nativeEvent.text);
 	};
 
-	onFocus = event => {
-		this.setState({ urlValue: '' });
+	setUrlValue = url => {
+		this.setState({ urlValue: url });
 	};
 
 	render() {
 		const { urlValue } = this.state;
+		const { screenProps } = this.props;
 
 		return (
-			<Container style={{ padding: 15 }}>
-				<Content>
-					<Item floatingLabel>
-						<Label style={{ marginTop: 5 }}>Webview URL</Label>
-						<Input
-							value={urlValue}
-							autoCapitalize={'none'}
-							keyboardType={'url'}
-							onFocus={this.onFocus}
-							onBlur={this.onBlur}
-							onChange={this.onChange}
-						/>
-					</Item>
-				</Content>
-			</Container>
+			<Form>
+				<Item stackedLabel>
+					<Label>Connection</Label>
+					<Input value={screenProps.network.type} disabled />
+				</Item>
+				<Item stackedLabel>
+					<Label>IP Address</Label>
+					<Input value={screenProps.network.address} disabled />
+				</Item>
+				<Item stackedLabel>
+					<Label>Website URL</Label>
+					<Input
+						value={urlValue}
+						autoCapitalize={'none'}
+						keyboardType={'url'}
+						onBlur={this.onBlurUrl}
+						onChange={this.onChangeUrl}
+					/>
+				</Item>
+			</Form>
 		);
 	}
 }
