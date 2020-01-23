@@ -94,7 +94,7 @@ const injectedJavascript = `
             window.postMessage("scan");
         });
 
-        window.addEventListener("message", function(event) {
+        var onMessage =  function(event) {
 
             var response = JSON.parse(event.data);
 
@@ -108,14 +108,16 @@ const injectedJavascript = `
                     }
                 break;
             }
-        });
+        }
+
+        window.addEventListener("message", onMessage);
+        document.addEventListener("message", onMessage);
     })()
 `;
 
 const webViewStyles = StyleSheet.create({
 	container: {
 		flex: 1,
-		marginTop: 20,
 	},
 	home: {
 		fontSize: responsiveFontSize({ min: 16, max: 26 }),

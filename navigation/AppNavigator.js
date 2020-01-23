@@ -15,7 +15,7 @@ class AppNavigator extends React.Component {
 			isInternetReachable: undefined,
 		},
 		webView: undefined,
-		webViewUrl: 'https://onsite.xpressreg.local/admin_xp/onsite.asp',
+		webViewUrl: 'https://xpressreg.net/register/expo1219/landing.asp',
 		cameraPermission: false,
 	};
 

@@ -51,6 +51,7 @@ class ScanScreen extends React.Component {
 									: BarCodeScanner.Constants.Type.back
 							}
 							style={scanStyles.container}
+							barCodeTypes={[BarCodeScanner.Constants.BarCodeType.qr]}
 							onBarCodeScanned={this.onScan}>
 							<View style={scanStyles.container} />
 							<TouchableOpacity
