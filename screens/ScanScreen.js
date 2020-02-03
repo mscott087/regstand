@@ -26,14 +26,14 @@ class ScanScreen extends React.Component {
 	};
 
 	onScan = ({ type, data }) => {
-		this.closeScanner();
-
 		var response = JSON.stringify({
 			data: data,
 			type: 'scan',
 		});
 
 		this.props.screenProps.webView.postMessage(response);
+
+		this.closeScanner();
 	};
 
 	render() {

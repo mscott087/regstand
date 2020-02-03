@@ -84,14 +84,11 @@ class WebViewScreen extends React.Component {
 
 const injectedJavascript = `
     (function() {
-        window.postMessage = function(data) {
-            window.ReactNativeWebView.postMessage(data);
-        };
 
         var scanTrigger = document.querySelector("[data-regstand-scan-trigger]");
         scanTrigger.addEventListener("click", function(e){
             e.preventDefault();
-            window.postMessage("scan");
+            window.ReactNativeWebView.postMessage("scan");
         });
 
         var onMessage =  function(event) {
