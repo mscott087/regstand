@@ -37,6 +37,9 @@ class WebViewScreen extends React.PureComponent {
 			case 'scan':
 				this.props.navigation.navigate('Scan');
 				break;
+			case 'card':
+				this.props.navigation.navigate('CreditCard');
+				break;
 		}
 	};
 
@@ -73,6 +76,8 @@ class WebViewScreen extends React.PureComponent {
 									allowsBackForwardNavigationGestures={true}
 									injectedJavaScript={injectedJavascript}
 									overScrollMode={'never'}
+									javaScriptEnabled={true}
+									domStorageEnabled={true}
 									sharedCookiesEnable={true}
 									scalesPageToFit
 								/>
@@ -86,14 +91,22 @@ class WebViewScreen extends React.PureComponent {
 }
 
 const injectedJavascript = `
-    (function() {
+    try{
+        var cardTrigger = document.querySelectorAll("#AccountNumber");
+        cardTrigger.forEach(trigger => {
+            trigger.addEventListener("click", function(e){
+                e.preventDefault();
+                window.ReactNativeWebView.postMessage("card");
+            });
+        })
 
-        var scanTrigger = document.querySelector("[data-regstand-scan-trigger]");
-        scanTrigger.addEventListener("click", function(e){
-            e.preventDefault();
-            window.ReactNativeWebView.postMessage("scan");
-        });
-
+        var scanTrigger = document.querySelectorAll("[data-regstand-scan-trigger]");
+        scanTrigger.forEach(trigger => {
+            trigger.addEventListener("click", function(e){
+                e.preventDefault();
+                window.ReactNativeWebView.postMessage("scan");
+            });
+        })
         var onMessage =  function(event) {
 
             var response = JSON.parse(event.data);
@@ -106,13 +119,34 @@ const injectedJavascript = `
                     if(typeof window[func] == 'function'){
                         window[func](response.data);
                     }
-                break;
+                    break;
+
+                case "card":
+
+                    var accountNumber = response.data.cardNumber;
+                    var csc = response.data.cvv;
+                    var expirationMonth = response.data.expiryMonth.toString();
+                    var expirationYear = response.data.expiryYear.toString().slice(-2);
+
+                    document.getElementById("AccountNumber").value = accountNumber;
+                    document.getElementById("CSC").value = csc;
+                    document.getElementById("ExpirationMonth").value = expirationMonth < 10 ? 0 + expirationMonth : expirationMonth;
+                    document.getElementById("ExpirationYear").value = expirationYear;
+                    break;
             }
         }
 
         window.addEventListener("message", onMessage);
         document.addEventListener("message", onMessage);
-    })()
+
+    } catch(e) {
+        window.ReactNativeWebView.postMessage(
+            JSON.stringify({
+                injected: false,
+            }),
+        )
+    }
+    true;
 `;
 
 const webViewStyles = StyleSheet.create({

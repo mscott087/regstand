@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import { responsiveFontSize, spacing } from './../constants/Layout';
 import { BarCodeScanner } from 'expo-barcode-scanner';
+import { RNCamera, RNCameraProps } from 'react-native-camera';
 
 class ScanScreen extends React.Component {
 	state = {
@@ -22,13 +23,13 @@ class ScanScreen extends React.Component {
 	};
 
 	closeScanner = () => {
-		this.props.navigation.pop();
+		this.props.navigation.navigate('WebView');
 	};
 
 	onScan = ({ type, data }) => {
 		var response = JSON.stringify({
-			data: data,
 			type: 'scan',
+			data: data,
 		});
 
 		this.props.screenProps.webViewRef.postMessage(response);
@@ -44,22 +45,22 @@ class ScanScreen extends React.Component {
 			return (
 				<View style={[scanStyles.container, scanStyles.background]}>
 					<TouchableWithoutFeedback onLongPress={this.toggleCamera}>
-						<BarCodeScanner
+						<RNCamera
 							type={
 								showFrontCamera
-									? BarCodeScanner.Constants.Type.front
-									: BarCodeScanner.Constants.Type.back
+									? RNCamera.Constants.Type.front
+									: RNCamera.Constants.Type.back
 							}
 							style={scanStyles.container}
-							barCodeTypes={[BarCodeScanner.Constants.BarCodeType.qr]}
-							onBarCodeScanned={this.onScan}>
+							barCodeTypes={[RNCamera.Constants.BarCodeType.qr]}
+							onBarCodeRead={this.onScan}>
 							<View style={scanStyles.container} />
 							<TouchableOpacity
 								onPress={this.closeScanner}
 								style={scanStyles.cancelContainer}>
 								<Text style={scanStyles.cancelText}>CANCEL</Text>
 							</TouchableOpacity>
-						</BarCodeScanner>
+						</RNCamera>
 					</TouchableWithoutFeedback>
 				</View>
 			);

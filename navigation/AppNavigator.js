@@ -1,7 +1,6 @@
 import React from 'react';
 import MainNavigator from './MainNavigator';
-import * as Permissions from 'expo-permissions';
-import * as Network from 'expo-network';
+import { Network, Permissions } from 'react-native-unimodules';
 import { StatusBar } from 'react-native';
 import { WEBVIEW_URLS, DEFAULT_WEBVIEW_URL } from './../constants/Urls';
 
@@ -22,7 +21,6 @@ class AppNavigator extends React.Component {
 
 	componentDidMount() {
 		StatusBar.setHidden(true);
-		this.getNetwork();
 	}
 
 	async getNetwork() {
@@ -49,6 +47,15 @@ class AppNavigator extends React.Component {
 
 	setWebViewUrl(url) {
 		this.setState({ webViewUrl: url });
+	}
+
+	postWebViewMessage(data) {
+		var response = JSON.stringify({
+			type: 'scan',
+			data: data,
+		});
+
+		this.state.screenProps.webViewRef.postMessage(response);
 	}
 
 	render() {
