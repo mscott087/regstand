@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { WebView } from 'react-native-webview';
 import {
 	FlingGestureHandler,
@@ -8,16 +8,28 @@ import {
 } from 'react-native-gesture-handler';
 import { responsiveFontSize, spacing } from './../constants/Layout';
 
-class WebViewScreen extends React.Component {
-	state = {
-		key: 1,
-		isWebViewUrlChanged: false,
-	};
-
-	webView = null;
-
+class WebViewScreen extends React.PureComponent {
 	componentDidMount() {
-		this.props.screenProps.setWebViewRef(this.webView);
+		this.updateWebViewRef();
+	}
+
+	componentDidUpdate(prevProps, prevState) {
+		if (
+			this.props.screenProps.webViewUrl !== prevProps.screenProps.webViewUrl
+		) {
+			this.updateWebViewRef();
+		}
+	}
+
+	updateWebViewRef() {
+		const currentUrl = this.getCurrentUrl();
+		this.props.screenProps.setWebViewRef(this[`webView${currentUrl.key}`]);
+	}
+
+	getCurrentUrl() {
+		return this.props.screenProps.urls.filter(url => {
+			return url.address === this.props.screenProps.webViewUrl;
+		})[0];
 	}
 
 	onMessage = event => {
@@ -28,23 +40,7 @@ class WebViewScreen extends React.Component {
 		}
 	};
 
-	resetWebViewToInitialUrl = () => {
-		if (this.state.isWebViewUrlChanged) {
-			this.setState({
-				key: this.state.key + 1,
-				isWebViewUrlChanged: false,
-			});
-		}
-	};
-
-	setWebViewUrlChanged = webviewState => {
-		if (webviewState.url !== this.props.screenProps.webViewUrl) {
-			this.setState({ isWebViewUrlChanged: true });
-		}
-	};
-
 	render() {
-		const { key } = this.state;
 		const { navigation, screenProps } = this.props;
 
 		return (
@@ -57,25 +53,33 @@ class WebViewScreen extends React.Component {
 					}
 				}}>
 				<View style={webViewStyles.container}>
-					<WebView
-						source={{
-							uri: screenProps.webViewUrl,
-						}}
-						key={key}
-						ref={ref => (this.webView = ref)}
-						onMessage={this.onMessage}
-						onNavigationStateChange={this.setWebViewUrlChanged}
-						allowsBackForwardNavigationGestures={true}
-						injectedJavaScript={injectedJavascript}
-						cacheEnabled
-						domStorageEnabled
-						scalesPageToFit
-					/>
-					<Text
-						onPress={this.resetWebViewToInitialUrl}
-						style={webViewStyles.home}>
-						Home
-					</Text>
+					{screenProps.urls.map(url => {
+						return (
+							<View
+								style={[
+									webViewStyles.container,
+									{
+										display:
+											screenProps.webViewUrl === url.address ? 'flex' : 'none',
+									},
+								]}
+								key={url.name}>
+								<WebView
+									source={{
+										uri: url.address,
+									}}
+									ref={ref => (this[`webView${url.key}`] = ref)}
+									onMessage={this.onMessage}
+									allowsBackForwardNavigationGestures={true}
+									injectedJavaScript={injectedJavascript}
+									overScrollMode={'never'}
+									domStorageEnabled
+									scalesPageToFit
+									sharedCookiesEnabled
+								/>
+							</View>
+						);
+					})}
 				</View>
 			</FlingGestureHandler>
 		);
