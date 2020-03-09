@@ -73,9 +73,8 @@ class WebViewScreen extends React.PureComponent {
 									allowsBackForwardNavigationGestures={true}
 									injectedJavaScript={injectedJavascript}
 									overScrollMode={'never'}
-									domStorageEnabled
+									sharedCookiesEnable={true}
 									scalesPageToFit
-									sharedCookiesEnabled
 								/>
 							</View>
 						);

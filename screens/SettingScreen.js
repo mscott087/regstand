@@ -69,11 +69,10 @@ export const styles = StyleSheet.create({
 	},
 	pickerText: {
 		width: '100%',
-		fontSize: responsiveFontSize({ min: 16, max: 32 }),
 	},
 	itemTextStyle: {
-		fontSize: responsiveFontSize({ min: 16, max: 32 }),
-		padding: 15,
+		fontSize: responsiveFontSize({ min: 16, max: 28 }),
+		padding: 10,
 	},
 });
 

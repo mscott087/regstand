@@ -1,13 +1,15 @@
+const domain = 'https://xpressreg.net';
+
 export const WEBVIEW_URLS = [
 	{
 		key: 'WorkstationSetup',
 		name: 'Workstation Setup',
-		address: 'https://xpressreg.net/register/expo1219/landing.asp',
+		address: domain + '/register/expo1219/landing.asp',
 	},
 	{
 		key: 'RegAdmin',
 		name: 'Reg Admin',
-		address: 'https://xpressreg.net/',
+		address: domain,
 	},
 ];
 
