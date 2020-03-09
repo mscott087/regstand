@@ -43,4 +43,10 @@ target 'regstand' do
 
   # Automatically detect installed unimodules
   use_unimodules!
+  pod 'RNAwesomeCardIO', :path => '../node_modules/react-native-awesome-card-io'
+
+  pod 'react-native-webview', :path => '../node_modules/react-native-webview'
+
+  pod 'react-native-camera', :path => '../node_modules/react-native-camera'
+
 end
