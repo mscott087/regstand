@@ -3,6 +3,7 @@ import MainNavigator from './MainNavigator';
 import * as Permissions from 'expo-permissions';
 import * as Network from 'expo-network';
 import { StatusBar } from 'react-native';
+import { WEBVIEW_URLS, DEFAULT_WEBVIEW_URL } from './../constants/Urls';
 
 class AppNavigator extends React.Component {
 	static router = MainNavigator.router;
@@ -14,8 +15,8 @@ class AppNavigator extends React.Component {
 			isConnected: undefined,
 			isInternetReachable: undefined,
 		},
-		webView: undefined,
-		webViewUrl: 'https://xpressreg.net/register/expo1219/landing.asp',
+		webViewRef: undefined,
+		webViewUrl: DEFAULT_WEBVIEW_URL.address,
 		cameraPermission: false,
 	};
 
@@ -43,7 +44,7 @@ class AppNavigator extends React.Component {
 	}
 
 	setWebViewRef(ref) {
-		this.setState({ webView: ref });
+		this.setState({ webViewRef: ref });
 	}
 
 	setWebViewUrl(url) {
@@ -57,6 +58,7 @@ class AppNavigator extends React.Component {
 				navigation={navigation}
 				screenProps={{
 					...this.state,
+					urls: WEBVIEW_URLS,
 					getNetwork: this.getNetwork.bind(this),
 					getCameraPermission: this.getCameraPermission.bind(this),
 					setCameraPermission: this.setCameraPermission.bind(this),

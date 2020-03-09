@@ -11,7 +11,7 @@ import { BarCodeScanner } from 'expo-barcode-scanner';
 
 class ScanScreen extends React.Component {
 	state = {
-		showFrontCamera: true,
+		showFrontCamera: false,
 	};
 
 	toggleCamera = () => {
@@ -31,7 +31,7 @@ class ScanScreen extends React.Component {
 			type: 'scan',
 		});
 
-		this.props.screenProps.webView.postMessage(response);
+		this.props.screenProps.webViewRef.postMessage(response);
 
 		this.closeScanner();
 	};
