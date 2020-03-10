@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Alert } from 'react-native';
 import { WebView } from 'react-native-webview';
 import {
 	FlingGestureHandler,
@@ -27,9 +27,19 @@ class WebViewScreen extends React.PureComponent {
 	}
 
 	getCurrentUrl() {
-		return this.props.screenProps.urls.filter(url => {
-			return url.address === this.props.screenProps.webViewUrl;
-		})[0];
+		const { screenProps } = this.props;
+		let currentIndex = -1;
+
+		screenProps.urls.find((url, index) => {
+			if (url.address === screenProps.webViewUrl) {
+				currentIndex = index;
+			}
+		});
+
+		return {
+			index: currentIndex,
+			...screenProps.urls[currentIndex],
+		};
 	}
 
 	onMessage = event => {
@@ -38,7 +48,11 @@ class WebViewScreen extends React.PureComponent {
 				this.props.navigation.navigate('Scan');
 				break;
 			case 'card':
-				this.props.navigation.navigate('CreditCard');
+				this.props.navigation.navigate('Card');
+				break;
+
+			case 'error':
+				Alert.alert('Error', 'There was an error with the injected JavaScript');
 				break;
 		}
 	};
@@ -48,43 +62,59 @@ class WebViewScreen extends React.PureComponent {
 
 		return (
 			<FlingGestureHandler
-				numberOfPointers={2}
+				numberOfPointers={3}
 				direction={Directions.LEFT}
 				onHandlerStateChange={({ nativeEvent }) => {
 					if (nativeEvent.state === State.ACTIVE) {
-						navigation.navigate('Settings');
+						let currentUrl = this.getCurrentUrl();
+						let nextIndex =
+							currentUrl.index === screenProps.urls.length - 1
+								? 0
+								: currentUrl.index + 1;
+						screenProps.setWebViewUrl(screenProps.urls[nextIndex].address);
 					}
 				}}>
-				<View style={webViewStyles.container}>
-					{screenProps.urls.map(url => {
-						return (
-							<View
-								style={[
-									webViewStyles.container,
-									{
-										display:
-											screenProps.webViewUrl === url.address ? 'flex' : 'none',
-									},
-								]}
-								key={url.name}>
-								<WebView
-									source={{
-										uri: url.address,
-									}}
-									ref={ref => (this[`webView${url.key}`] = ref)}
-									onMessage={this.onMessage}
-									allowsBackForwardNavigationGestures={true}
-									injectedJavaScript={injectedJavascript}
-									overScrollMode={'never'}
-									javaScriptEnabled={true}
-									domStorageEnabled={true}
-									sharedCookiesEnable={true}
-									scalesPageToFit
-								/>
-							</View>
-						);
-					})}
-				</View>
+				<FlingGestureHandler
+					numberOfPointers={2}
+					direction={Directions.LEFT}
+					onHandlerStateChange={({ nativeEvent }) => {
+						if (nativeEvent.state === State.ACTIVE) {
+							navigation.navigate('Settings');
+						}
+					}}>
+					<View style={webViewStyles.container}>
+						{screenProps.urls.map(url => {
+							return (
+								<View
+									style={[
+										webViewStyles.container,
+										{
+											display:
+												screenProps.webViewUrl === url.address
+													? 'flex'
+													: 'none',
+										},
+									]}
+									key={url.name}>
+									<WebView
+										source={{
+											uri: url.address,
+										}}
+										ref={ref => (this[`webView${url.key}`] = ref)}
+										onMessage={this.onMessage}
+										allowsBackForwardNavigationGestures={true}
+										injectedJavaScript={injectedJavascript}
+										overScrollMode={'never'}
+										javaScriptEnabled={true}
+										domStorageEnabled={true}
+										sharedCookiesEnable={true}
+										scalesPageToFit
+									/>
+								</View>
+							);
+						})}
+					</View>
+				</FlingGestureHandler>
 			</FlingGestureHandler>
 		);
 	}
@@ -92,23 +122,24 @@ class WebViewScreen extends React.PureComponent {
 
 const injectedJavascript = `
     try{
-        var cardTrigger = document.querySelectorAll("#AccountNumber");
-        cardTrigger.forEach(trigger => {
-            trigger.addEventListener("click", function(e){
+        var cardTrigger = document.querySelector("[data-regstand-card-trigger]");
+        var scanTrigger = document.querySelector("[data-regstand-scan-trigger]");
+
+        if(cardTrigger){
+            cardTrigger.addEventListener("click", function(e){
                 e.preventDefault();
                 window.ReactNativeWebView.postMessage("card");
             });
-        })
+        }
 
-        var scanTrigger = document.querySelectorAll("[data-regstand-scan-trigger]");
-        scanTrigger.forEach(trigger => {
-            trigger.addEventListener("click", function(e){
+        if(scanTrigger){
+            scanTrigger.addEventListener("click", function(e){
                 e.preventDefault();
                 window.ReactNativeWebView.postMessage("scan");
             });
-        })
-        var onMessage =  function(event) {
+        }
 
+        var onMessage =  function(event) {
             var response = JSON.parse(event.data);
 
             switch (response.type) {
@@ -123,15 +154,28 @@ const injectedJavascript = `
 
                 case "card":
 
-                    var accountNumber = response.data.cardNumber;
-                    var csc = response.data.cvv;
-                    var expirationMonth = response.data.expiryMonth.toString();
-                    var expirationYear = response.data.expiryYear.toString().slice(-2);
+                    var fields = {
+                        cardNumber: document.querySelector("[data-regstand-card-number]"),
+                        cvv: document.querySelector("[data-regstand-card-cvv]"),
+                        month: document.querySelector("[data-regstand-card-month]"),
+                        year: document.querySelector("[data-regstand-card-year]")
+                    }
 
-                    document.getElementById("AccountNumber").value = accountNumber;
-                    document.getElementById("CSC").value = csc;
-                    document.getElementById("ExpirationMonth").value = expirationMonth < 10 ? 0 + expirationMonth : expirationMonth;
-                    document.getElementById("ExpirationYear").value = expirationYear;
+                    var values = {
+                        cardNumber: response.data.cardNumber,
+                        cvv: response.data.cvv,
+                        month: (function(){
+                            var month = response.data.expiryMonth.toString();
+                            return month < 10 ? 0 + month : month;
+                        })(),
+                        year: response.data.expiryYear.toString().slice(-2)
+                    }
+
+                    fields.cardNumber.value = values.cardNumber;
+                    fields.cvv.value = values.cvv;
+                    fields.month.value = values.month;
+                    fields.year.value = values.year;
+
                     break;
             }
         }
@@ -140,11 +184,7 @@ const injectedJavascript = `
         document.addEventListener("message", onMessage);
 
     } catch(e) {
-        window.ReactNativeWebView.postMessage(
-            JSON.stringify({
-                injected: false,
-            }),
-        )
+        window.ReactNativeWebView.postMessage("error");
     }
     true;
 `;
