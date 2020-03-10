@@ -4,10 +4,6 @@ import { Item, Input, Label, Form, Picker } from 'native-base';
 import { responsiveFontSize } from './../constants/Layout';
 
 class SettingScreen extends React.Component {
-	state = {
-		urlValue: '',
-	};
-
 	componentDidMount() {
 		this.setState({ urlValue: this.props.screenProps.webViewUrl });
 	}
@@ -15,7 +11,7 @@ class SettingScreen extends React.Component {
 	onChangeUrl = value => {
 		const { screenProps, navigation } = this.props;
 		screenProps.setWebViewUrl(value);
-		navigation.pop();
+		navigation.navigate('WebView');
 	};
 
 	renderPicker() {
@@ -31,7 +27,7 @@ class SettingScreen extends React.Component {
 			<Picker
 				mode='dropdown'
 				placeholder='Select One'
-				selectedValue={this.state.urlValue}
+				selectedValue={screenProps.webViewUrl}
 				onValueChange={this.onChangeUrl}
 				textStyle={styles.pickerText}
 				itemTextStyle={styles.itemTextStyle}>
