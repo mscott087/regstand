@@ -7,8 +7,7 @@ import {
 	TouchableWithoutFeedback,
 } from 'react-native';
 import { responsiveFontSize, spacing } from './../constants/Layout';
-import { BarCodeScanner } from 'expo-barcode-scanner';
-import { RNCamera, RNCameraProps } from 'react-native-camera';
+import { RNCamera } from 'react-native-camera';
 
 class ScanScreen extends React.Component {
 	state = {
