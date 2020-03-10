@@ -28,7 +28,7 @@ class WebViewScreen extends React.PureComponent {
 
 	getCurrentUrl() {
 		const { screenProps } = this.props;
-		let currentIndex = -1;
+		let currentIndex = 0;
 
 		screenProps.urls.find((url, index) => {
 			if (url.address === screenProps.webViewUrl) {

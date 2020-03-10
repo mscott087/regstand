@@ -9,7 +9,7 @@ import {
 import { responsiveFontSize, spacing } from './../constants/Layout';
 import { RNCamera } from 'react-native-camera';
 
-class ScanScreen extends React.Component {
+class ScanScreen extends React.PureComponent {
 	state = {
 		showFrontCamera: false,
 	};

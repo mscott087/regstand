@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 import { Item, Input, Label, Form, Picker } from 'native-base';
 import { responsiveFontSize } from './../constants/Layout';
 
-class SettingScreen extends React.Component {
+class SettingScreen extends React.PureComponent {
 	componentDidMount() {
 		this.setState({ urlValue: this.props.screenProps.webViewUrl });
 	}

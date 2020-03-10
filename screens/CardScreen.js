@@ -2,7 +2,7 @@ import React from 'react';
 import { View } from 'react-native';
 import { CardIOModule } from 'react-native-awesome-card-io';
 
-class CardScreen extends React.Component {
+class CardScreen extends React.PureComponent {
 	componentDidMount() {
 		this.scanCard();
 	}
