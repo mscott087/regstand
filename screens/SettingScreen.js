@@ -67,10 +67,7 @@ export const styles = StyleSheet.create({
 		width: '100%',
 		marginLeft: -25,
 	},
-	itemTextStyle: {
-		fontSize: responsiveFontSize({ min: 16, max: 26 }),
-		padding: 10,
-	},
+	itemTextStyle: {},
 });
 
 export default SettingScreen;
