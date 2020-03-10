@@ -1,22 +1,12 @@
 import React from 'react';
-import {
-	View,
-	TouchableOpacity,
-	Text,
-	Platform,
-	StyleSheet,
-	Alert,
-	processColor,
-} from 'react-native';
-import {
-	CardIOModule,
-	CardIOUtilities,
-	CardIOView,
-} from 'react-native-awesome-card-io';
-import { Item, Input, Label, Form, Picker } from 'native-base';
-import { responsiveFontSize } from './../constants/Layout';
+import { View } from 'react-native';
+import { CardIOModule } from 'react-native-awesome-card-io';
 
-class CreditCardScreen extends React.Component {
+class CardScreen extends React.Component {
+	componentDidMount() {
+		this.scanCard();
+	}
+
 	closeScanner() {
 		this.props.navigation.navigate('WebView');
 	}
@@ -30,7 +20,9 @@ class CreditCardScreen extends React.Component {
 					type: 'card',
 					data: card,
 				});
+
 				this.props.screenProps.webViewRef.postMessage(response);
+
 				this.closeScanner();
 			})
 			.catch(() => {
@@ -39,11 +31,8 @@ class CreditCardScreen extends React.Component {
 	};
 
 	render() {
-		this.scanCard();
 		return <View style={{ flex: 1 }}></View>;
 	}
 }
 
-export const styles = StyleSheet.create({});
-
-export default CreditCardScreen;
+export default CardScreen;

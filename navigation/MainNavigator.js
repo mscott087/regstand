@@ -5,7 +5,7 @@ import { createStackNavigator } from 'react-navigation-stack';
 import WebViewScreen from '../screens/WebViewScreen';
 import ScanScreen from '../screens/ScanScreen';
 import SettingScreen from '../screens/SettingScreen';
-import CreditCardScreen from '../screens/CreditCardScreen';
+import CardScreen from '../screens/CardScreen';
 import { responsiveFontSize } from './../constants/Layout';
 
 const MainTabNavigator = createStackNavigator(
@@ -24,8 +24,8 @@ const MainTabNavigator = createStackNavigator(
 			}),
 		},
 
-		CreditCard: {
-			screen: CreditCardScreen,
+		Card: {
+			screen: CardScreen,
 			navigationOptions: ({ navigation }) => ({
 				header: null,
 			}),
