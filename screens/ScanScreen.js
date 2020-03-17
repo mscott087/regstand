@@ -51,6 +51,7 @@ class ScanScreen extends React.PureComponent {
 									: RNCamera.Constants.Type.back
 							}
 							style={scanStyles.container}
+							captureAudio={false}
 							barCodeTypes={[RNCamera.Constants.BarCodeType.qr]}
 							onBarCodeRead={this.onScan}>
 							<View style={scanStyles.container} />
