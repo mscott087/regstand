@@ -38,7 +38,7 @@ class SettingScreen extends React.PureComponent {
 
 	render() {
 		const { screenProps } = this.props;
-		const picker = this.renderPicker();
+
 		return (
 			<Form>
 				<Item stackedLabel>
@@ -52,7 +52,7 @@ class SettingScreen extends React.PureComponent {
 
 				<Item stackedLabel>
 					<Label style={styles.label}>Website</Label>
-					{picker}
+					{this.renderPicker()}
 				</Item>
 			</Form>
 		);

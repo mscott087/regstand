@@ -42,7 +42,7 @@ class ScanScreen extends React.PureComponent {
 
 		if (screenProps.cameraPermission) {
 			return (
-				<View style={[scanStyles.container, scanStyles.background]}>
+				<View style={[styles.container, styles.background]}>
 					<TouchableWithoutFeedback onLongPress={this.toggleCamera}>
 						<RNCamera
 							type={
@@ -50,15 +50,15 @@ class ScanScreen extends React.PureComponent {
 									? RNCamera.Constants.Type.front
 									: RNCamera.Constants.Type.back
 							}
-							style={scanStyles.container}
+							style={styles.container}
 							captureAudio={false}
 							barCodeTypes={[RNCamera.Constants.BarCodeType.qr]}
 							onBarCodeRead={this.onScan}>
-							<View style={scanStyles.container} />
+							<View style={styles.container} />
 							<TouchableOpacity
 								onPress={this.closeScanner}
-								style={scanStyles.cancelContainer}>
-								<Text style={scanStyles.cancelText}>CANCEL</Text>
+								style={styles.cancelContainer}>
+								<Text style={styles.cancelText}>CANCEL</Text>
 							</TouchableOpacity>
 						</RNCamera>
 					</TouchableWithoutFeedback>
@@ -71,7 +71,7 @@ class ScanScreen extends React.PureComponent {
 	}
 }
 
-export const scanStyles = StyleSheet.create({
+export const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 	},

@@ -12,7 +12,7 @@ export const WEBVIEW_URLS = [
 		name: 'Reg Admin',
 		address: domain,
 	},
-	{
+	/*{
 		key: 'WorkstationSetupOnsite',
 		name: 'Workstation Setup (Onsite)',
 		address: domainOnsite + '/admin_xp/onsite.asp',
@@ -21,7 +21,7 @@ export const WEBVIEW_URLS = [
 		key: 'RegAdminOnsite',
 		name: 'Reg Admin (Onsite)',
 		address: domainOnsite + '/admin_xp/login.asp',
-	},
+	},*/
 ];
 
 export const DEFAULT_WEBVIEW_URL = WEBVIEW_URLS[0];

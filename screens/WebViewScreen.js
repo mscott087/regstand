@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, StyleSheet, Alert } from 'react-native';
+import { View, StyleSheet, Alert, Text } from 'react-native';
+import { Constants } from 'react-native-unimodules';
 import { WebView } from 'react-native-webview';
 import {
 	FlingGestureHandler,
@@ -82,12 +83,16 @@ class WebViewScreen extends React.PureComponent {
 							navigation.navigate('Settings');
 						}
 					}}>
-					<View style={webViewStyles.container}>
+					<View
+						style={[
+							styles.container,
+							{ marginTop: Constants.statusBarHeight },
+						]}>
 						{screenProps.urls.map(url => {
 							return (
 								<View
 									style={[
-										webViewStyles.container,
+										styles.container,
 										{
 											display:
 												screenProps.webViewUrl === url.address
@@ -101,14 +106,12 @@ class WebViewScreen extends React.PureComponent {
 											uri: url.address,
 										}}
 										ref={ref => (this[`webView${url.key}`] = ref)}
-										onMessage={this.onMessage}
 										allowsBackForwardNavigationGestures={true}
 										injectedJavaScript={injectedJavascript}
-										overScrollMode={'never'}
-										javaScriptEnabled={true}
-										domStorageEnabled={true}
-										sharedCookiesEnable={true}
+										onMessage={this.onMessage}
 										scalesPageToFit
+										showsHorizontalScrollIndicator={false}
+										startInLoadingState
 									/>
 								</View>
 							);
@@ -142,44 +145,61 @@ const injectedJavascript = `
         var onMessage =  function(event) {
             var response = JSON.parse(event.data);
 
-            switch (response.type) {
-                case "scan":
-                    var action = document.querySelector("[data-regstand-scan-action]");
-                    var func = action.dataset.regstandScanAction;
+            if(response.type){
+                switch (response.type) {
+                    case "scan":
+                        var action = document.querySelector("[data-regstand-scan-action]");
+                        if(action){
+                            var func = action.dataset.regstandScanAction;
 
-                    if(typeof window[func] == 'function'){
-                        window[func](response.data);
-                    }
-                    break;
+                            if(typeof window[func] == 'function'){
+                                window[func](response.data);
+                            }
+                        }
+                        break;
 
-                case "card":
+                    case "card":
 
-                    var fields = {
-                        cardNumber: document.querySelector("[data-regstand-card-number]"),
-                        cvv: document.querySelector("[data-regstand-card-cvv]"),
-                        month: document.querySelector("[data-regstand-card-month]"),
-                        year: document.querySelector("[data-regstand-card-year]")
-                    }
+                        var fields = {
+                            cardNumber: document.querySelector("[data-regstand-card-number]"),
+                            cvv: document.querySelector("[data-regstand-card-cvv]"),
+                            month: document.querySelector("[data-regstand-card-month]"),
+                            year: document.querySelector("[data-regstand-card-year]")
+                        }
 
-                    var values = {
-                        cardNumber: response.data.cardNumber,
-                        cvv: response.data.cvv,
-                        month: (function(){
-                            var month = response.data.expiryMonth.toString();
-                            return month < 10 ? 0 + month : month;
-                        })(),
-                        year: response.data.expiryYear.toString().slice(-2)
-                    }
+                        var values = {
+                            cardNumber: response.data.cardNumber,
+                            cvv: response.data.cvv,
+                            month: (function(){
+                                var month = response.data.expiryMonth.toString();
+                                return month < 10 ? 0 + month : month;
+                            })(),
+                            year: response.data.expiryYear.toString().slice(-2)
+                        }
 
-                    fields.cardNumber.value = values.cardNumber;
-                    fields.cvv.value = values.cvv;
-                    fields.month.value = values.month;
-                    fields.year.value = values.year;
+                        if(fields.cardNumber){
+                            fields.cardNumber.value = values.cardNumber;
+                        }
 
-                    break;
+                        if(fields.cvv){
+                            fields.cvv.value = values.cvv;
+                        }
+
+                        if(fields.month){
+                            fields.month.value = values.month;
+                        }
+
+                        if(fields.year){
+                            fields.year.value = values.year;
+                        }
+
+                        break;
+                }
             }
         }
 
+        window.removeEventListener("message", onMessage);
+        document.removeEventListener("message", onMessage);
         window.addEventListener("message", onMessage);
         document.addEventListener("message", onMessage);
 
@@ -189,15 +209,9 @@ const injectedJavascript = `
     true;
 `;
 
-const webViewStyles = StyleSheet.create({
+const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-	},
-	home: {
-		fontSize: responsiveFontSize({ min: 16, max: 26 }),
-		padding: spacing.vertical.small,
-		textAlign: 'center',
-		backgroundColor: '#eee',
 	},
 });
 
