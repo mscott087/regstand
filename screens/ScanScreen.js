@@ -9,7 +9,7 @@ import {
 import { responsiveFontSize, spacing } from './../constants/Layout';
 import { RNCamera } from 'react-native-camera';
 
-class ScanScreen extends React.PureComponent {
+class ScanScreen extends React.Component {
 	state = {
 		showFrontCamera: false,
 	};
@@ -43,7 +43,9 @@ class ScanScreen extends React.PureComponent {
 		if (screenProps.cameraPermission) {
 			return (
 				<View style={[styles.container, styles.background]}>
-					<TouchableWithoutFeedback onLongPress={this.toggleCamera}>
+					<TouchableWithoutFeedback
+						style={styles.container}
+						onPress={this.toggleCamera}>
 						<RNCamera
 							type={
 								showFrontCamera
