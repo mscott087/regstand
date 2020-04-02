@@ -5,6 +5,7 @@ import { createStackNavigator } from 'react-navigation-stack';
 import WebViewScreen from '../screens/WebViewScreen';
 import ScanScreen from '../screens/ScanScreen';
 import SettingScreen from '../screens/SettingScreen';
+import CardScreen from '../screens/CardScreen';
 import { responsiveFontSize } from './../constants/Layout';
 
 const MainTabNavigator = createStackNavigator(
@@ -18,6 +19,13 @@ const MainTabNavigator = createStackNavigator(
 
 		Scan: {
 			screen: ScanScreen,
+			navigationOptions: ({ navigation }) => ({
+				header: null,
+			}),
+		},
+
+		Card: {
+			screen: CardScreen,
 			navigationOptions: ({ navigation }) => ({
 				header: null,
 			}),

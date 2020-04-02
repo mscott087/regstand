@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Alert, Text } from 'react-native';
+import { Constants } from 'react-native-unimodules';
 import { WebView } from 'react-native-webview';
 import {
 	FlingGestureHandler,
@@ -27,15 +28,32 @@ class WebViewScreen extends React.PureComponent {
 	}
 
 	getCurrentUrl() {
-		return this.props.screenProps.urls.filter(url => {
-			return url.address === this.props.screenProps.webViewUrl;
-		})[0];
+		const { screenProps } = this.props;
+		let currentIndex = 0;
+
+		screenProps.urls.find((url, index) => {
+			if (url.address === screenProps.webViewUrl) {
+				currentIndex = index;
+			}
+		});
+
+		return {
+			index: currentIndex,
+			...screenProps.urls[currentIndex],
+		};
 	}
 
 	onMessage = event => {
 		switch (event.nativeEvent.data) {
 			case 'scan':
 				this.props.navigation.navigate('Scan');
+				break;
+			case 'card':
+				this.props.navigation.navigate('Card');
+				break;
+
+			case 'error':
+				Alert.alert('Error', 'There was an error with the injected JavaScript');
 				break;
 		}
 	};
@@ -45,85 +63,69 @@ class WebViewScreen extends React.PureComponent {
 
 		return (
 			<FlingGestureHandler
-				numberOfPointers={2}
+				numberOfPointers={3}
 				direction={Directions.LEFT}
 				onHandlerStateChange={({ nativeEvent }) => {
 					if (nativeEvent.state === State.ACTIVE) {
-						navigation.navigate('Settings');
+						let currentUrl = this.getCurrentUrl();
+						let nextIndex =
+							currentUrl.index === screenProps.urls.length - 1
+								? 0
+								: currentUrl.index + 1;
+						screenProps.setWebViewUrl(screenProps.urls[nextIndex].address);
 					}
 				}}>
-				<View style={webViewStyles.container}>
-					{screenProps.urls.map(url => {
-						return (
-							<View
-								style={[
-									webViewStyles.container,
-									{
-										display:
-											screenProps.webViewUrl === url.address ? 'flex' : 'none',
-									},
-								]}
-								key={url.name}>
-								<WebView
-									source={{
-										uri: url.address,
-									}}
-									ref={ref => (this[`webView${url.key}`] = ref)}
-									onMessage={this.onMessage}
-									allowsBackForwardNavigationGestures={true}
-									injectedJavaScript={injectedJavascript}
-									overScrollMode={'never'}
-									sharedCookiesEnable={true}
-									scalesPageToFit
-								/>
-							</View>
-						);
-					})}
-				</View>
+				<FlingGestureHandler
+					numberOfPointers={2}
+					direction={Directions.LEFT}
+					onHandlerStateChange={({ nativeEvent }) => {
+						if (nativeEvent.state === State.ACTIVE) {
+							navigation.navigate('Settings');
+						}
+					}}>
+					<View
+						style={[
+							styles.container,
+							{ paddingTop: Constants.statusBarHeight },
+						]}>
+						{screenProps.urls.map(url => {
+							return (
+								<View
+									style={[
+										styles.container,
+										{
+											display:
+												screenProps.webViewUrl === url.address
+													? 'flex'
+													: 'none',
+										},
+									]}
+									key={url.name}>
+									<WebView
+										source={{
+											uri: url.address,
+										}}
+										ref={ref => (this[`webView${url.key}`] = ref)}
+										allowsBackForwardNavigationGestures={true}
+										injectedJavaScript={url.javascript}
+										onMessage={this.onMessage}
+										scalesPageToFit
+										showsHorizontalScrollIndicator={false}
+										startInLoadingState
+									/>
+								</View>
+							);
+						})}
+					</View>
+				</FlingGestureHandler>
 			</FlingGestureHandler>
 		);
 	}
 }
 
-const injectedJavascript = `
-    (function() {
-
-        var scanTrigger = document.querySelector("[data-regstand-scan-trigger]");
-        scanTrigger.addEventListener("click", function(e){
-            e.preventDefault();
-            window.ReactNativeWebView.postMessage("scan");
-        });
-
-        var onMessage =  function(event) {
-
-            var response = JSON.parse(event.data);
-
-            switch (response.type) {
-                case "scan":
-                    var action = document.querySelector("[data-regstand-scan-action]");
-                    var func = action.dataset.regstandScanAction;
-
-                    if(typeof window[func] == 'function'){
-                        window[func](response.data);
-                    }
-                break;
-            }
-        }
-
-        window.addEventListener("message", onMessage);
-        document.addEventListener("message", onMessage);
-    })()
-`;
-
-const webViewStyles = StyleSheet.create({
+const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-	},
-	home: {
-		fontSize: responsiveFontSize({ min: 16, max: 26 }),
-		padding: spacing.vertical.small,
-		textAlign: 'center',
-		backgroundColor: '#eee',
 	},
 });
 

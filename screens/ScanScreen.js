@@ -7,7 +7,7 @@ import {
 	TouchableWithoutFeedback,
 } from 'react-native';
 import { responsiveFontSize, spacing } from './../constants/Layout';
-import { BarCodeScanner } from 'expo-barcode-scanner';
+import { RNCamera } from 'react-native-camera';
 
 class ScanScreen extends React.Component {
 	state = {
@@ -22,13 +22,13 @@ class ScanScreen extends React.Component {
 	};
 
 	closeScanner = () => {
-		this.props.navigation.pop();
+		this.props.navigation.navigate('WebView');
 	};
 
 	onScan = ({ type, data }) => {
 		var response = JSON.stringify({
-			data: data,
 			type: 'scan',
+			data: data,
 		});
 
 		this.props.screenProps.webViewRef.postMessage(response);
@@ -42,24 +42,27 @@ class ScanScreen extends React.Component {
 
 		if (screenProps.cameraPermission) {
 			return (
-				<View style={[scanStyles.container, scanStyles.background]}>
-					<TouchableWithoutFeedback onLongPress={this.toggleCamera}>
-						<BarCodeScanner
+				<View style={[styles.container, styles.background]}>
+					<TouchableWithoutFeedback
+						style={styles.container}
+						onPress={this.toggleCamera}>
+						<RNCamera
 							type={
 								showFrontCamera
-									? BarCodeScanner.Constants.Type.front
-									: BarCodeScanner.Constants.Type.back
+									? RNCamera.Constants.Type.front
+									: RNCamera.Constants.Type.back
 							}
-							style={scanStyles.container}
-							barCodeTypes={[BarCodeScanner.Constants.BarCodeType.qr]}
-							onBarCodeScanned={this.onScan}>
-							<View style={scanStyles.container} />
+							style={styles.container}
+							captureAudio={false}
+							barCodeTypes={[RNCamera.Constants.BarCodeType.qr]}
+							onBarCodeRead={this.onScan}>
+							<View style={styles.container} />
 							<TouchableOpacity
 								onPress={this.closeScanner}
-								style={scanStyles.cancelContainer}>
-								<Text style={scanStyles.cancelText}>CANCEL</Text>
+								style={styles.cancelContainer}>
+								<Text style={styles.cancelText}>CANCEL</Text>
 							</TouchableOpacity>
-						</BarCodeScanner>
+						</RNCamera>
 					</TouchableWithoutFeedback>
 				</View>
 			);
@@ -70,7 +73,7 @@ class ScanScreen extends React.Component {
 	}
 }
 
-export const scanStyles = StyleSheet.create({
+export const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 	},

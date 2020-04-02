@@ -3,11 +3,7 @@ import { StyleSheet } from 'react-native';
 import { Item, Input, Label, Form, Picker } from 'native-base';
 import { responsiveFontSize } from './../constants/Layout';
 
-class SettingScreen extends React.Component {
-	state = {
-		urlValue: '',
-	};
-
+class SettingScreen extends React.PureComponent {
 	componentDidMount() {
 		this.setState({ urlValue: this.props.screenProps.webViewUrl });
 	}
@@ -15,7 +11,7 @@ class SettingScreen extends React.Component {
 	onChangeUrl = value => {
 		const { screenProps, navigation } = this.props;
 		screenProps.setWebViewUrl(value);
-		navigation.pop();
+		navigation.navigate('WebView');
 	};
 
 	renderPicker() {
@@ -31,7 +27,7 @@ class SettingScreen extends React.Component {
 			<Picker
 				mode='dropdown'
 				placeholder='Select One'
-				selectedValue={this.state.urlValue}
+				selectedValue={screenProps.webViewUrl}
 				onValueChange={this.onChangeUrl}
 				textStyle={styles.pickerText}
 				itemTextStyle={styles.itemTextStyle}>
@@ -42,7 +38,7 @@ class SettingScreen extends React.Component {
 
 	render() {
 		const { screenProps } = this.props;
-		const picker = this.renderPicker();
+
 		return (
 			<Form>
 				<Item stackedLabel>
@@ -56,7 +52,7 @@ class SettingScreen extends React.Component {
 
 				<Item stackedLabel>
 					<Label style={styles.label}>Website</Label>
-					{picker}
+					{this.renderPicker()}
 				</Item>
 			</Form>
 		);
@@ -71,10 +67,7 @@ export const styles = StyleSheet.create({
 		width: '100%',
 		marginLeft: -25,
 	},
-	itemTextStyle: {
-		fontSize: responsiveFontSize({ min: 16, max: 26 }),
-		padding: 10,
-	},
+	itemTextStyle: {},
 });
 
 export default SettingScreen;

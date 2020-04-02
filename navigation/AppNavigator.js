@@ -43,8 +43,9 @@ class AppNavigator extends React.Component {
 		this.setState({ cameraPermission: permission });
 	}
 
-	setWebViewRef(ref) {
-		this.setState({ webViewRef: ref });
+	setWebViewRef(webViewRef) {
+		this.setState({ webViewRef: webViewRef });
+		webViewRef.reload();
 	}
 
 	setWebViewUrl(url) {
@@ -59,7 +60,6 @@ class AppNavigator extends React.Component {
 				screenProps={{
 					...this.state,
 					urls: WEBVIEW_URLS,
-					getNetwork: this.getNetwork.bind(this),
 					getCameraPermission: this.getCameraPermission.bind(this),
 					setCameraPermission: this.setCameraPermission.bind(this),
 					setWebViewRef: this.setWebViewRef.bind(this),
